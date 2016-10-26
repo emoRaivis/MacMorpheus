@@ -11,6 +11,7 @@
 @implementation EyeView {
 	SCNNode * cameraNode;
 	SCNSphere * dome;
+	SCNNode * domeNode;
 }
 
 - (id) initWithFrame: (NSRect) frameRect {
@@ -20,15 +21,15 @@
 		
 		cameraNode = [SCNNode node];
 		cameraNode.camera = [SCNCamera camera];
-		cameraNode.camera.yFov = 80;
+		cameraNode.camera.yFov = 90;
 		[self.scene.rootNode addChildNode: cameraNode];
 
-		dome = [SCNSphere sphereWithRadius: 20.0];
+		dome = [SCNSphere sphereWithRadius: 60.0];
 		dome.segmentCount = 480;
-		SCNNode * domeNode = [SCNNode nodeWithGeometry: dome];
-		domeNode.transform = SCNMatrix4MakeRotation(M_PI, 0, 1, 0);
-//		domeNode.transform = SCNMatrix4MakeRotation(M_PI / -2.0, 0, 1, 0);
+		domeNode = [SCNNode nodeWithGeometry: dome];
 		[self.scene.rootNode addChildNode: domeNode];
+		
+		[self applyCameraTransform];
 		
 	}
 	return self;
@@ -38,11 +39,21 @@
 	SCNMaterial * contentMaterial = [SCNMaterial material];
 	contentMaterial.cullMode = SCNCullModeFront;
 	contentMaterial.diffuse.contents = contents;
+	contentMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1);
+	contentMaterial.diffuse.wrapS = SCNWrapModeRepeat;
 	dome.materials = @[contentMaterial];
 }
 
 - (id) contents {
 	return dome.materials.firstObject.diffuse.contents;
+}
+
+- (void) setProjectionTransform: (SCNMatrix4) projectionTransform {
+	domeNode.transform = projectionTransform;
+}
+
+- (SCNMatrix4) projectionTransform {
+	return domeNode.transform;
 }
 
 - (void) setYaw: (float) yaw {

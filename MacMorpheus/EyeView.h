@@ -12,6 +12,8 @@
 
 @property (nonatomic, assign) id contents;
 
+@property (nonatomic, assign) SCNMatrix4 projectionTransform;
+
 @property (nonatomic, assign) float roll;
 @property (nonatomic, assign) float pitch;
 @property (nonatomic, assign) float yaw;

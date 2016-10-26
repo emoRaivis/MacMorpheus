@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <AVKit/AVKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "EyeView.h"
 
 // ----
 
@@ -33,10 +34,10 @@
 + (NSArray<VideoPlayerViewProjectionMethod *> *) allProjectionMethods;
 
 + (instancetype) projectionMethodWithName: (NSString *) name
-						  eyeLayerHandler: (void (^)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer)) eyeLayerHandler;
+						  eyeLayerHandler: (void (^)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView)) eyeLayerHandler;
 
 @property (nonatomic, readonly) NSString * name;
-@property (nonatomic, readonly) void (^eyeLayerHandler)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer);
+@property (nonatomic, readonly) void (^eyeLayerHandler)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView);
 
 @end
 

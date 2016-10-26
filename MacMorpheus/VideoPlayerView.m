@@ -10,7 +10,6 @@
 
 // ----
 
-#import "EyeView.h"
 #import "PSVR.h"
 
 // ----
@@ -79,15 +78,12 @@
 					CALayer * eyeViewLayer = [CALayer layer];
 					eyeViewLayer.backgroundColor = [NSColor darkGrayColor].CGColor;
 					
-					_projectionMethod.eyeLayerHandler(eyeViewLayer, i, contentSize, playerLayer);
+					EyeView * targetEyeView = (i == 0 ? leftView : rightView);
+					_projectionMethod.eyeLayerHandler(eyeViewLayer, i, contentSize, playerLayer, targetEyeView);
 
 					[eyeViewLayer addSublayer: playerLayer];
 					
-					if(i == 0) {
-						leftView.contents = eyeViewLayer;
-					} else {
-						rightView.contents = eyeViewLayer;
-					}
+					targetEyeView.contents = eyeViewLayer;
 					
 				}
 			}
@@ -200,7 +196,7 @@
 				
 //			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"2D Regular" eyeLayerHandler: nil],
 //			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"2D 180° Regular" eyeLayerHandler: nil],
-//			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"2D 360° Regular" eyeLayerHandler: nil],
+//			// --
 //
 //			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D Horizontal (Stacked)" eyeLayerHandler: nil],
 //			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D 180° Horizontal (Stacked)" eyeLayerHandler: nil],
@@ -209,8 +205,17 @@
 //			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D Vertical (Side By Side)" eyeLayerHandler: nil],
 //			// --
 //			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D 360° Vertical (Side By Side)" eyeLayerHandler: nil],
+
+			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"2D 360° Regular" eyeLayerHandler: ^(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView) {
 			
-			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D 360° Horizontal (Stacked)" eyeLayerHandler: ^(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer) {
+				CGRect eyeFrame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+				eyeLayer.frame = eyeFrame;
+				
+				eyeView.projectionTransform = SCNMatrix4MakeRotation(M_PI, 0, 1, 0);;
+			
+			}],
+			
+			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D 360° Horizontal (Stacked)" eyeLayerHandler: ^(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView) {
 				
 				CGRect eyeFrame = CGRectMake(0, 0, contentSize.width, round(contentSize.height / 2.0));
 				if(eye == 1) {
@@ -218,12 +223,14 @@
 				}
 				eyeLayer.frame = eyeFrame;
 				
+				eyeView.projectionTransform = SCNMatrix4MakeRotation(M_PI, 0, 1, 0);;
+				
 			}],
 			
-			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D 180° Vertical (Side By Side)" eyeLayerHandler: ^(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer) {
+			[VideoPlayerViewProjectionMethod projectionMethodWithName: @"3D 180° Vertical (Side By Side)" eyeLayerHandler: ^(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView) {
 				
 				CGRect eyeFrame = CGRectMake(0, 0, contentSize.width, contentSize.height);
-				if(eye == 0) {
+				if(eye == 1) {
 					CGRect playerFrame = playerLayer.frame;
 					playerFrame.origin.x -= round(eyeFrame.size.width / 2.0);
 					playerLayer.frame = playerFrame;
@@ -234,6 +241,8 @@
 					playerLayer.mask = maskLayer;
 				}
 				eyeLayer.frame = eyeFrame;
+
+				eyeView.projectionTransform = SCNMatrix4MakeRotation(M_PI / 2.0, 0, 1, 0);
 				
 /*
 				CGRect eyeFrame = CGRectMake(0, 0, round(contentSize.width / 2.0), contentSize.height);
@@ -254,7 +263,7 @@
 	return projectionMethods;
 }
 
-- (instancetype) initWithName: (NSString *) name eyeLayerHandler: (void (^)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer)) eyeLayerHandler {
+- (instancetype) initWithName: (NSString *) name eyeLayerHandler: (void (^)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView)) eyeLayerHandler {
 	if((self = [super init])) {
 		_name = name;
 		_eyeLayerHandler = eyeLayerHandler;
@@ -262,7 +271,7 @@
 	return self;
 }
 
-+ (instancetype) projectionMethodWithName: (NSString *) name eyeLayerHandler: (void (^)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer)) eyeLayerHandler {
++ (instancetype) projectionMethodWithName: (NSString *) name eyeLayerHandler: (void (^)(CALayer * eyeLayer, int eye, CGSize contentSize, AVPlayerLayer * playerLayer, EyeView * eyeView)) eyeLayerHandler {
 	return [[self alloc] initWithName: name eyeLayerHandler: eyeLayerHandler];
 }
 

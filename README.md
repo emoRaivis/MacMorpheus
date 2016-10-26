@@ -6,7 +6,7 @@
 Demo: https://youtu.be/qXFqAeZr4NM
 
 ## Download here
-https://github.com/emoRaivis/MacMorpheus/releases/download/0.1/MacMorpheus.app.zip
+https://github.com/emoRaivis/MacMorpheus/releases/download/0.2/MacMorpheus.app.zip
 
 ## Setup instructions
 * Power ON the PS4.
@@ -21,6 +21,7 @@ https://github.com/emoRaivis/MacMorpheus/releases/download/0.1/MacMorpheus.app.z
 ![wiring_diagram.png](wiring_diagram.png?raw=true)
 
 ## Supported modes
+* 2D 180°
 * 3D 360° Horizontal (Stacked)
 * 3D 180° Vertical (Side By Side)
 
