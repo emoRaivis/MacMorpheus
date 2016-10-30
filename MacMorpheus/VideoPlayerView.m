@@ -124,11 +124,11 @@
 		}
 	} else if(event.keyCode == 124) { // RIGHT
 		
-		[self advancePlaybackBySeconds: 1];
+		[self advancePlaybackBySeconds: 15];
 		
 	} else if(event.keyCode == 123) { // LEFT
 		
-		[self advancePlaybackBySeconds: -1];
+		[self advancePlaybackBySeconds: -15];
 	
 	} else if(event.keyCode == 34) { // i
 		
